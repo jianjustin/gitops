@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cilium-ingress-controller
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: cilium-ingress-controller
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: cilium-ingress-controller
+    spec:
+      containers:
+      - name: cilium-ingress-controller
+        image: cilium/cilium-ingress-controller:v1.13.3
+        args:
+        - --config-dir=/tmp/cilium-ingress-controller
+        volumeMounts:
+        - name: cilium-ingress-controller-config
+          mountPath: /tmp/cilium-ingress-controller/cilium-controller-configmap.yaml
+          subPath: cilium-controller-configmap.yaml
+          readOnly: true
+      volumes:
+      - name: cilium-ingress-controller-config
+        configMap:
+          name: cilium-controller-configmap
+
